@@ -1,0 +1,60 @@
+# Repository Opinions
+
+## Architecture
+- Clean Architecture; logic strictly in Domain Services.
+- One namespace per file.
+
+## C# Patterns
+- Use Primary Constructors.
+- Favor `records` for DTOs.
+- Use language keywords: `string` not `String`, `int` not `Int32`.
+- Use `""` not `string.Empty`.
+- Use `int?` not `Nullable<int>`.
+- `readonly` on all eligible fields.
+- Expression-bodied: ✅ accessors/properties — ❌ constructors/methods.
+- Use collection expressions (`[]`) for all empty and initialized collections — supersedes `Array.Empty<T>()` and `new T[] { }` / `new List<T> { }` syntax.
+- Prefer object initializers, null propagation (`?.`), null coalescing (`??`), throw expressions, index (`^`) and range (`..`) operators.
+
+## Naming
+- Private instance fields: `_camelCase`. No `m_` prefix.
+- Types, methods, properties: `PascalCase`.
+- Interfaces: prefix `I`.
+- Type parameters: prefix `T`.
+- Variables and parameters: `camelCase`.
+- Tuple element names: explicit (not inferred), `PascalCase`.
+- No type names used as parameter or variable identifiers.
+- No `this.` prefix on local calls.
+
+## Formatting
+- 4-space indent for `.cs`; 2-space for `.csproj`. Spaces, not tabs.
+- CRLF line endings; UTF-8; always insert final newline.
+- Open brace on new line for all blocks.
+- Always use braces — no braceless control flow.
+- Long parameter/argument lists: one parameter per line.
+- Never use `var` — always explicit types.
+
+## Usings
+- `<ImplicitUsings>enable</ImplicitUsings>` — common `System.*` namespaces are auto-included; do not re-declare them.
+- `System` directives first for any explicit usings.
+- Usings outside namespace.
+- No unnecessary usings.
+
+## Async
+- `ValueTask.FromResult` for synchronous interface implementations; `Task.FromResult` only when the caller requires `Task<T>`.
+- Forward `CancellationToken` where applicable.
+- `ConfigureAwait(false)` not required (ASP.NET Core context).
+
+## Security
+- No hardcoded credentials.
+- No SQL string concatenation or format string injection — use parameterized queries.
+- Always specify `StringComparison` in string comparisons.
+
+## Documentation
+- XML doc comments not required.
+
+## No-Go Zone
+- No generic `try-catch` — use Global Exception Middleware.
+- No `#region` directives.
+- No `var`.
+- No `this.` prefix.
+- No hardcoded credentials or SQL string building.
