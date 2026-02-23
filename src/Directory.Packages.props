@@ -4,5 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- All package versions declared here. No Version attributes in .csproj files. -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 </Project>

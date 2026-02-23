@@ -1,12 +1,33 @@
 using OpineCoding.Api.Extensions;
+using Serilog;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-builder.Services.AddHealthChecks();
+try
+{
+    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-WebApplication app = builder.Build();
+    builder.Host.UseSerilog((context, services, config) => config
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .WriteTo.Console());
 
-app.MapDefaultHealthChecks();
-app.MapDefaultEndpoints();
+    builder.Services.AddHealthChecks();
 
-app.Run();
+    WebApplication app = builder.Build();
+
+    app.MapDefaultHealthChecks();
+    app.MapDefaultEndpoints();
+
+    app.Run();
+}
+catch (Exception lastChanceException)
+{
+    Log.Fatal(lastChanceException, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

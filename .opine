@@ -60,11 +60,18 @@
 - Do not register `UseStaticFiles()` middleware in API projects — it enables indiscriminate static file serving.
 - Serve static assets (e.g. `favicon.svg`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`, return `Results.File` with an explicit MIME type, and chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(...))`.
 
+## Logging
+- Use Serilog as the logging provider (`Serilog.AspNetCore`).
+- In `Program.cs`, create a bootstrap logger (`WriteTo.Console().CreateBootstrapLogger()`) before the try block so startup failures are captured.
+- Replace the bootstrap logger with the full pipeline logger via `builder.Host.UseSerilog(...)` using `ReadFrom.Configuration` and `ReadFrom.Services`.
+- Default sink: Console. OpenTelemetry will be added as an additional sink later.
+
 ## Documentation
 - XML doc comments not required.
 
 ## No-Go Zone
-- No generic `try-catch` — use Global Exception Middleware.
+- No `try-catch` in application or request-handling code — use Global Exception Middleware.
+- Exception: the Serilog startup bootstrap `try/catch/finally` in `Program.cs` is required to capture startup failures and flush the logger.
 - No `#region` directives.
 - No `var`.
 - No `this.` prefix.
