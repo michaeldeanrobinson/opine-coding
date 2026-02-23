@@ -3,11 +3,15 @@
 ## Architecture
 - Clean Architecture; logic strictly in Domain Services.
 - One namespace per file.
+- All code projects reside under `src/`.
+- Target framework: `net10.0`; `<LangVersion>latest</LangVersion>`; `<Nullable>enable</Nullable>` — set globally in `Directory.Build.props`, never per `.csproj`.
+- Centralize all package versions in `Directory.Packages.props` (`<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>`); no version attributes in individual `.csproj` files.
+- On solution creation, generate a `.editorconfig` that encodes all active rules from `.opine`. No `.ruleset` files; no `stylecop.json` — `.editorconfig` is the single source of analyzer configuration.
 
 ## C# Patterns
 - Use Primary Constructors.
 - Favor `records` for DTOs.
-- Use language keywords: `string` not `String`, `int` not `Int32`.
+- Use language keywords for declarations: `string x`, `int y`. Use BCL type names for static member access: `String.IsNullOrEmpty`, `Int32.Parse`.
 - Use `""` not `string.Empty`.
 - Use `int?` not `Nullable<int>`.
 - `readonly` on all eligible fields.
@@ -48,6 +52,10 @@
 - No hardcoded credentials.
 - No SQL string concatenation or format string injection — use parameterized queries.
 - Always specify `StringComparison` in string comparisons.
+
+## API Defaults
+- Use Minimal API structure — no MVC controllers.
+- Always register health checks; map `/health` (full) and `/alive` (liveness) by default.
 
 ## Documentation
 - XML doc comments not required.
