@@ -4,8 +4,9 @@
 - Clean Architecture; logic strictly in Domain Services.
 - One namespace per file.
 - All code projects reside under `src/`.
-- Target framework: `net10.0`; `<LangVersion>latest</LangVersion>`; `<Nullable>enable</Nullable>` — set globally in `Directory.Build.props`, never per `.csproj`.
-- Centralize all package versions in `Directory.Packages.props` (`<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>`); no version attributes in individual `.csproj` files.
+- Target framework: `net10.0`; `<LangVersion>latest</LangVersion>`; `<Nullable>enable</Nullable>` — set globally in `src/Directory.Build.props`, never per `.csproj`.
+- Centralize all package versions in `src/Directory.Packages.props` (`<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>`); no version attributes in individual `.csproj` files.
+- `src/` is the exclusive project boundary — no projects, `Directory.Build.props`, or `Directory.Packages.props` exist outside it.
 - On solution creation, generate a `.editorconfig` that encodes all active rules from `.opine`. No `.ruleset` files; no `stylecop.json` — `.editorconfig` is the single source of analyzer configuration.
 
 ## C# Patterns

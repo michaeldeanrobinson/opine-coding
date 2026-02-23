@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OpineCoding.Api/OpineCoding.Api.csproj" />
+  </Folder>
+</Solution>
