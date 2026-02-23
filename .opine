@@ -57,6 +57,8 @@
 ## API Defaults
 - Use Minimal API structure — no MVC controllers.
 - Always register health checks; map `/health` (full) and `/alive` (liveness) by default.
+- Do not register `UseStaticFiles()` middleware in API projects — it enables indiscriminate static file serving.
+- Serve static assets (e.g. `favicon.svg`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`, return `Results.File` with an explicit MIME type, and chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(...))`.
 
 ## Documentation
 - XML doc comments not required.
@@ -67,3 +69,4 @@
 - No `var`.
 - No `this.` prefix.
 - No hardcoded credentials or SQL string building.
+- No `UseStaticFiles()` in API projects — serve static assets via dedicated endpoints.

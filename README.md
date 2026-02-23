@@ -1,3 +1,5 @@
+<img src="src/OpineCoding.Api/wwwroot/favicon.svg" width="48" height="48" align="left"/>
+
 # Opine Coding
 ### Stop Vibe Coding. Start Governing.
 

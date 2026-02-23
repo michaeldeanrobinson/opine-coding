@@ -52,3 +52,6 @@ PublishProfiles/
 secrets.json
 appsettings.*.json
 !appsettings.example.json
+
+# Node (tools/)
+node_modules/
