@@ -53,7 +53,18 @@ Create a `.opine` file in your repository root. Structure it in named sections s
 ```
 
 ### 2. Bootstrap Your AI Agent
-Point your AI agent at `.opine` at the start of every session. In GitHub Copilot, use `.github/copilot-instructions.md`:
+Point your AI agent at `.opine` at the start of every session. Each tool has its own instruction file — the content is the same, only the location differs.
+
+| Tool | Instruction File |
+| :--- | :--- |
+| **GitHub Copilot** | `.github/copilot-instructions.md` |
+| **Cursor** | `.cursor/rules/*.mdc` |
+| **Windsurf** | `.windsurfrules` |
+| **Cline** | `.clinerules` |
+| **Aider** | `CONVENTIONS.md` |
+| **Continue** | `.continue/config.json` (system prompt field) |
+
+Regardless of tool, the directive is the same:
 
 ```markdown
 ## Session Bootstrap
