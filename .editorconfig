@@ -33,6 +33,12 @@ dotnet_style_predefined_type_for_member_access = false:error
 # Readonly fields
 dotnet_style_readonly_field = true:error
 
+# this. prefix — prohibited (IDE0003)
+dotnet_style_qualification_for_field = false:error
+dotnet_style_qualification_for_property = false:error
+dotnet_style_qualification_for_method = false:error
+dotnet_style_qualification_for_event = false:error
+
 # Expression-level preferences
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
@@ -188,45 +194,16 @@ dotnet_diagnostic.IDE0055.severity = warning                # Fix formatting
 
 # Naming
 dotnet_diagnostic.IDE1006.severity = error                  # Naming rule violation
-dotnet_diagnostic.SA1300.severity = error                   # Element must begin with uppercase
-dotnet_diagnostic.SA1308.severity = error                   # No m_ prefix on fields
-dotnet_diagnostic.SA1309.severity = none                    # Allow _ prefix on fields
-dotnet_diagnostic.SA1312.severity = error                   # Variables must be camelCase
-dotnet_diagnostic.SA1313.severity = error                   # Parameters must be camelCase
-dotnet_diagnostic.SA1314.severity = error                   # Type parameters must begin with T
-dotnet_diagnostic.SX1309.severity = warning                 # Field names must begin with _
-
-# this. prefix — disabled; no this. on local calls
-dotnet_diagnostic.SA1101.severity = none
-dotnet_diagnostic.SX1101.severity = warning
-
-# Type keywords — SA1121 disabled; dotnet_style_predefined_type_* handles the split opinion
-dotnet_diagnostic.SA1121.severity = none
-
-# Use "" not string.Empty — SA1122 disabled
-dotnet_diagnostic.SA1122.severity = none
-
-# Use int? not Nullable<int>
-dotnet_diagnostic.SA1125.severity = error
-
-# No #region
-dotnet_diagnostic.SA1124.severity = error
-
-# One namespace per file
-dotnet_diagnostic.SA1403.severity = error
-
-# Always use braces
-dotnet_diagnostic.SA1519.severity = error
-dotnet_diagnostic.SA1520.severity = error
 
 # No type names as identifiers
 dotnet_diagnostic.CA1720.severity = error
 
 # Security
 dotnet_diagnostic.CA1307.severity = error                   # Specify StringComparison
-dotnet_diagnostic.SCS0015.severity = error                  # Hardcoded credentials
-dotnet_diagnostic.SCS0035.severity = error                  # SQL injection via format string
-dotnet_diagnostic.SCS0036.severity = error                  # SQL injection via concatenation
+dotnet_diagnostic.CA1309.severity = error                   # Use ordinal StringComparison
+dotnet_diagnostic.SCS0015.severity = error                  # Hardcoded credentials (requires SecurityCodeScan)
+dotnet_diagnostic.SCS0035.severity = error                  # SQL injection via format string (requires SecurityCodeScan)
+dotnet_diagnostic.SCS0036.severity = error                  # SQL injection via concatenation (requires SecurityCodeScan)
 
 # Async
 dotnet_diagnostic.CA2016.severity = warning                 # Forward CancellationToken
@@ -234,33 +211,6 @@ dotnet_diagnostic.CA2007.severity = none                    # ConfigureAwait not
 
 # Performance
 dotnet_diagnostic.CA1825.severity = warning                 # Prefer [] over zero-length array allocations
-
-# Documentation — not required
-dotnet_diagnostic.SA1600.severity = none
-dotnet_diagnostic.SA1601.severity = none
-dotnet_diagnostic.SA1602.severity = none
-dotnet_diagnostic.SA1604.severity = none
-dotnet_diagnostic.SA1605.severity = none
-dotnet_diagnostic.SA1606.severity = none
-dotnet_diagnostic.SA1607.severity = none
-dotnet_diagnostic.SA1608.severity = none
-dotnet_diagnostic.SA1611.severity = none
-dotnet_diagnostic.SA1612.severity = none
-dotnet_diagnostic.SA1613.severity = none
-dotnet_diagnostic.SA1614.severity = none
-dotnet_diagnostic.SA1615.severity = none
-dotnet_diagnostic.SA1616.severity = none
-dotnet_diagnostic.SA1618.severity = none
-dotnet_diagnostic.SA1619.severity = none
-dotnet_diagnostic.SA1620.severity = none
-dotnet_diagnostic.SA1621.severity = none
-dotnet_diagnostic.SA1622.severity = none
-dotnet_diagnostic.SA1623.severity = none
-dotnet_diagnostic.SA1625.severity = none
-dotnet_diagnostic.SA1626.severity = none
-dotnet_diagnostic.SA1627.severity = none
-dotnet_diagnostic.SA1629.severity = none
-dotnet_diagnostic.SA1633.severity = none
 
 # Suppressed — not applicable to this project
 dotnet_diagnostic.CA1062.severity = none                    # Nullable enabled; null checks redundant

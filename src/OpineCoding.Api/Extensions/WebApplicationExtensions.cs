@@ -21,6 +21,11 @@ internal static class WebApplicationExtensions
 
         app.MapGet("favicon.ico", (IWebHostEnvironment env) =>
             {
+                if (String.IsNullOrEmpty(env.WebRootPath))
+                {
+                    return Results.NoContent();
+                }
+
                 string path = Path.Combine(env.WebRootPath, "favicon.ico");
 
                 if (!File.Exists(path))

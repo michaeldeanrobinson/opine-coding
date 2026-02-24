@@ -1,4 +1,5 @@
 using OpineCoding.Api.Extensions;
+using OpineCoding.Api.Infrastructure;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -14,9 +15,12 @@ try
         .ReadFrom.Services(services)
         .WriteTo.Console());
 
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddHealthChecks();
 
     WebApplication app = builder.Build();
+
+    app.UseExceptionHandler();
 
     app.MapDefaultHealthChecks()
        .MapDefaultEndpoints();
