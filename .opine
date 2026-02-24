@@ -4,9 +4,11 @@
 - Vertical Slice Architecture (VSA); features are the unit of organisation, not layers.
 - One namespace per file.
 - All code projects reside under `src/`.
+- Use `.slnx` solution format — not `.sln`.
 - Target framework: `net10.0`; `<LangVersion>latest</LangVersion>`; `<Nullable>enable</Nullable>` — set globally in `src/Directory.Build.props`, never per `.csproj`.
 - Centralize all package versions in `src/Directory.Packages.props` (`<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>`); no version attributes in individual `.csproj` files.
 - `src/` is the exclusive project boundary — no projects, `Directory.Build.props`, or `Directory.Packages.props` exist outside it.
+- The `tools/` directory at the repo root is permitted for non-.NET tooling scripts (e.g. Node.js asset generation); it contains no C# code and is not subject to `src/` conventions.
 - On solution creation, generate a `.editorconfig` that encodes all active rules from `.opine`. No `.ruleset` files; no `stylecop.json` — `.editorconfig` is the single source of analyzer configuration.
 
 ## Vertical Slices
@@ -22,15 +24,15 @@
       {FeatureName}Handler.cs    ← business logic, internal to the slice
   ```
 - Namespace mirrors folder path: `{Project}.Features.{FeatureName}`.
-- Endpoints self-register via `IEndpoint` (`void MapEndpoint(IEndpointRouteBuilder app)`); `WebApplicationExtensions` scans the assembly and calls each implementation — no central routing file.
+- Endpoints self-register via `IEndpoint` (`void MapEndpoint(IEndpointRouteBuilder app)`) defined in `Common/IEndpoint.cs` under namespace `{Project}.Common`; `WebApplicationExtensions` scans using `typeof(IEndpoint).Assembly.GetTypes()` — not `Assembly.GetExecutingAssembly()` — and calls each implementation at startup.
 - `IEndpoint` implementations must have a public parameterless constructor — `Activator.CreateInstance` is used for registration; inject dependencies via Minimal API parameter binding inside `MapEndpoint`, not via the constructor.
-- `IEndpoint` implementations are `internal sealed`. Request and response records are `public`. Handler logic is `internal` and stays private to the slice.
+- `IEndpoint` implementations are `internal sealed`. Request and response records are `public sealed record`. Handler classes are `internal static class` — handler logic stays private to the slice.
 - Shared contracts (e.g. pagination, error envelopes) live in `Common/`. Shared infrastructure (DbContext, HTTP clients) lives in `Infrastructure/`. Nothing else is shared.
 - A slice may not reference another slice. If two slices need the same type, move it to `Common/` or duplicate it — coupling is worse than duplication here.
 
 ## C# Patterns
 - Use Primary Constructors.
-- Favor `records` for DTOs.
+- Favor `sealed records` for DTOs — always `public sealed record Foo(...)`.
 - Use language keywords for declarations: `string x`, `int y`. Use BCL type names for static member access: `String.IsNullOrEmpty`, `Int32.Parse`.
 - Use `""` not `string.Empty`.
 - Use `int?` not `Nullable<int>`.
@@ -58,7 +60,7 @@
 - Never use `var` — always explicit types.
 
 ## Usings
-- `<ImplicitUsings>enable</ImplicitUsings>` — common `System.*` namespaces are auto-included; do not re-declare them.
+- `<ImplicitUsings>enable</ImplicitUsings>` is set in `src/Directory.Build.props` — common `System.*` namespaces are auto-included; do not re-declare them.
 - `System` directives first for any explicit usings.
 - Usings outside namespace.
 - No unnecessary usings.
@@ -75,9 +77,14 @@
 
 ## API Defaults
 - Use Minimal API structure — no MVC controllers.
-- Always register health checks; map `/health` (full) and `/alive` (liveness) by default.
+- Startup wiring lives in `Extensions/WebApplicationExtensions.cs` as `internal static` extension methods on `WebApplication`; all such methods return `WebApplication` to support fluent chaining.
+- Always register health checks; map `/health` (full) and `/alive` (liveness — `Predicate = _ => false` to exclude all checks) by default.
+- The `"/"` root endpoint and all static asset endpoints must chain `.AllowAnonymous().ExcludeFromDescription()`.
 - Do not register `UseStaticFiles()` middleware in API projects — it enables indiscriminate static file serving.
-- Serve static assets (e.g. `favicon.svg`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`, return `Results.File` with an explicit MIME type, and chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(...))`.
+- Serve static assets (e.g. `favicon.ico`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`; return `Results.NoContent()` if the file does not exist, otherwise `Results.File` with an explicit MIME type (`image/x-icon` for `.ico`); chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(TimeSpan.FromDays(7)))`.
+- Static assets (favicon, social preview, etc.) are placed in `wwwroot/` under the API project; served only via explicit `MapGet` endpoints, never via `UseStaticFiles()`.
+- Register middleware in this order before `app.Run()`: `UseExceptionHandler()` first, then `MapDefaultHealthChecks()`, then `MapDefaultEndpoints()`.
+- Feature endpoints must chain `.WithName("{FeatureName}").Produces<{FeatureName}Response>()` for OpenAPI discoverability.
 
 ## Logging
 - Use Serilog as the logging provider (`Serilog.AspNetCore`).
@@ -89,7 +96,7 @@
 - XML doc comments not required.
 
 ## No-Go Zone
-- No `try-catch` in application or request-handling code — use Global Exception Middleware.
+- No `try-catch` in application or request-handling code — handle exceptions via `IExceptionHandler` registered with `builder.Services.AddExceptionHandler<T>()` and activated with `app.UseExceptionHandler()`.
 - Exception: the Serilog startup bootstrap `try/catch/finally` in `Program.cs` is required to capture startup failures and flush the logger.
 - No `#region` directives.
 - No `var`.

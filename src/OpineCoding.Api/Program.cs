@@ -18,8 +18,8 @@ try
 
     WebApplication app = builder.Build();
 
-    app.MapDefaultHealthChecks();
-    app.MapDefaultEndpoints();
+    app.MapDefaultHealthChecks()
+       .MapDefaultEndpoints();
 
     app.Run();
 }

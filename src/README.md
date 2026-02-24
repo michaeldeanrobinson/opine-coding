@@ -24,8 +24,8 @@ The endpoint is discovered and registered automatically at startup — no change
 | `IEndpoint` implementation must be `internal sealed` | Slices are not public API |
 | `IEndpoint` implementation must have a public parameterless constructor | `Activator.CreateInstance` is used for registration |
 | Inject dependencies inside `MapEndpoint` via Minimal API parameter binding, not via constructor | Keeps the constructor parameterless; DI still works per-request |
-| Request and response records are `public` | They cross the HTTP boundary |
-| Handler logic is `internal` | Business logic does not leave the slice |
+| Request and response records are `public sealed record` | They cross the HTTP boundary |
+| Handler class is `internal static class` | Business logic does not leave the slice |
 | No slice may reference another slice | Use `Common/` for shared contracts or duplicate the type |
 
 ---
@@ -52,8 +52,10 @@ namespace OpineCoding.Api.Features.GetStatus;
 
 internal static class GetStatusHandler
 {
-    internal static GetStatusResponse Handle(GetStatusRequest request) =>
-        new("ok", request.Version);
+    internal static GetStatusResponse Handle(GetStatusRequest request)
+    {
+        return new("ok", request.Version);
+    }
 }
 ```
 

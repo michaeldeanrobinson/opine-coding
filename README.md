@@ -71,7 +71,7 @@ Regardless of tool, the directive is the same:
 ```markdown
 ## Session Bootstrap
 - Read `.opine` before generating any code. It is the source of truth.
-- Apply all sections: Architecture, C# Patterns, Naming, Formatting, Usings, Async, Security, No-Go Zone.
+- Apply all sections: Architecture, Vertical Slices, C# Patterns, Naming, Formatting, Usings, Async, Security, API Defaults, Logging, Documentation, No-Go Zone.
 - Repo-specific patterns override AI defaults — no exceptions.
 ```
 

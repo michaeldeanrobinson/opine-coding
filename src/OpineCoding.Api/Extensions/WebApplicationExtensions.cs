@@ -9,6 +9,7 @@ internal static class WebApplicationExtensions
     {
         app.MapHealthChecks("/health");
         app.MapHealthChecks("/alive", new HealthCheckOptions { Predicate = _ => false });
+
         return app;
     }
 
