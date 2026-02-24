@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
+using OpineCoding.Api.Common;
 
-namespace OpineCoding.Api.Infrastructure;
+namespace OpineCoding.Api.Middleware;
 
 internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
@@ -14,7 +15,7 @@ internal sealed class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> log
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
         await httpContext.Response.WriteAsJsonAsync(
-            new { error = "An unexpected error occurred." },
+            new ErrorResponse("An unexpected error occurred."),
             cancellationToken: cancellationToken);
 
         return true;

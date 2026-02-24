@@ -27,7 +27,7 @@
 - Endpoints self-register via `IEndpoint` (`void MapEndpoint(IEndpointRouteBuilder app)`) defined in `Common/IEndpoint.cs` under namespace `{Project}.Common`; `WebApplicationExtensions` scans using `typeof(IEndpoint).Assembly.GetTypes()` — not `Assembly.GetExecutingAssembly()` — and calls each implementation at startup.
 - `IEndpoint` implementations must have a public parameterless constructor — `Activator.CreateInstance` is used for registration; inject dependencies via Minimal API parameter binding inside `MapEndpoint`, not via the constructor.
 - `IEndpoint` implementations are `internal sealed`. Request and response records are `public sealed record`. Handler classes are `internal static class` — handler logic stays private to the slice.
-- Shared contracts (e.g. pagination, error envelopes) live in `Common/`. Shared infrastructure (DbContext, HTTP clients) lives in `Infrastructure/`. Nothing else is shared.
+- Shared contracts (e.g. pagination, error envelopes) live in `Common/`. Shared infrastructure (DbContext, HTTP clients, external service wrappers) lives in `Infrastructure/`. ASP.NET Core pipeline concerns (exception handlers, request logging) live in `Middleware/`. Nothing else is shared.
 - A slice may not reference another slice. If two slices need the same type, move it to `Common/` or duplicate it — coupling is worse than duplication here.
 
 ## C# Patterns
@@ -81,7 +81,7 @@
 - Always register health checks; map `/health` (full) and `/alive` (liveness — `Predicate = _ => false` to exclude all checks) by default.
 - The `"/"` root endpoint and all static asset endpoints must chain `.AllowAnonymous().ExcludeFromDescription()`.
 - Do not register `UseStaticFiles()` middleware in API projects — it enables indiscriminate static file serving.
-- Serve static assets (e.g. `favicon.ico`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`; return `Results.NoContent()` if the file does not exist, otherwise `Results.File` with an explicit MIME type (`image/x-icon` for `.ico`); chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(TimeSpan.FromDays(7)))`.
+- Serve static assets (e.g. `favicon.ico`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`; guard with `String.IsNullOrEmpty(env.WebRootPath)` before calling `Path.Combine`; return `Results.NoContent()` if the path is empty or the file does not exist, otherwise `Results.File` with an explicit MIME type (`image/x-icon` for `.ico`); chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(TimeSpan.FromDays(7)))`.
 - Static assets (favicon, social preview, etc.) are placed in `wwwroot/` under the API project; served only via explicit `MapGet` endpoints, never via `UseStaticFiles()`.
 - Register middleware in this order before `app.Run()`: `UseExceptionHandler()` first, then `MapDefaultHealthChecks()`, then `MapDefaultEndpoints()`.
 - Feature endpoints must chain `.WithName("{FeatureName}").Produces<{FeatureName}Response>()` for OpenAPI discoverability.

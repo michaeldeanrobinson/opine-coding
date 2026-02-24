@@ -88,4 +88,5 @@ internal sealed class GetStatusEndpoint : IEndpoint
 | :--- | :--- |
 | Shared response contracts, pagination, error envelopes | `Common/` |
 | DbContext, HTTP clients, external service wrappers | `Infrastructure/` |
+| Exception handlers, pipeline middleware | `Middleware/` |
 | Startup wiring, health checks, favicon | `Extensions/` |

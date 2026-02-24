@@ -1,5 +1,5 @@
 using OpineCoding.Api.Extensions;
-using OpineCoding.Api.Infrastructure;
+using OpineCoding.Api.Middleware;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
