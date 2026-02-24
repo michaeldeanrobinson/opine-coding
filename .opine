@@ -1,13 +1,32 @@
 # Repository Opinions
 
 ## Architecture
-- Clean Architecture; logic strictly in Domain Services.
+- Vertical Slice Architecture (VSA); features are the unit of organisation, not layers.
 - One namespace per file.
 - All code projects reside under `src/`.
 - Target framework: `net10.0`; `<LangVersion>latest</LangVersion>`; `<Nullable>enable</Nullable>` — set globally in `src/Directory.Build.props`, never per `.csproj`.
 - Centralize all package versions in `src/Directory.Packages.props` (`<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>`); no version attributes in individual `.csproj` files.
 - `src/` is the exclusive project boundary — no projects, `Directory.Build.props`, or `Directory.Packages.props` exist outside it.
 - On solution creation, generate a `.editorconfig` that encodes all active rules from `.opine`. No `.ruleset` files; no `stylecop.json` — `.editorconfig` is the single source of analyzer configuration.
+
+## Vertical Slices
+- Organise by feature, not layer. Every feature lives under `Features/{FeatureName}/`.
+- A slice is self-contained: endpoint, request record, response record, and handler all reside in the same folder.
+- Slice folder template:
+  ```
+  Features/
+    {FeatureName}/
+      {FeatureName}Endpoint.cs   ← implements IEndpoint
+      {FeatureName}Request.cs    ← record
+      {FeatureName}Response.cs   ← record
+      {FeatureName}Handler.cs    ← business logic, internal to the slice
+  ```
+- Namespace mirrors folder path: `{Project}.Features.{FeatureName}`.
+- Endpoints self-register via `IEndpoint` (`void MapEndpoint(IEndpointRouteBuilder app)`); `WebApplicationExtensions` scans the assembly and calls each implementation — no central routing file.
+- `IEndpoint` implementations must have a public parameterless constructor — `Activator.CreateInstance` is used for registration; inject dependencies via Minimal API parameter binding inside `MapEndpoint`, not via the constructor.
+- `IEndpoint` implementations are `internal sealed`. Request and response records are `public`. Handler logic is `internal` and stays private to the slice.
+- Shared contracts (e.g. pagination, error envelopes) live in `Common/`. Shared infrastructure (DbContext, HTTP clients) lives in `Infrastructure/`. Nothing else is shared.
+- A slice may not reference another slice. If two slices need the same type, move it to `Common/` or duplicate it — coupling is worse than duplication here.
 
 ## C# Patterns
 - Use Primary Constructors.
@@ -77,3 +96,5 @@
 - No `this.` prefix.
 - No hardcoded credentials or SQL string building.
 - No `UseStaticFiles()` in API projects — serve static assets via dedicated endpoints.
+- No cross-slice references — a feature slice must not import types from another feature slice.
+- No central routing file — each slice registers its own endpoint via `IEndpoint`.

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpineCoding.Api.Common;
 
 namespace OpineCoding.Api.Extensions;
 
@@ -31,6 +32,17 @@ internal static class WebApplicationExtensions
             .AllowAnonymous()
             .ExcludeFromDescription()
             .CacheOutput(policy => policy.Expire(TimeSpan.FromDays(7)));
+
+        IEnumerable<IEndpoint> endpoints = typeof(IEndpoint).Assembly
+            .GetTypes()
+            .Where(t => t is { IsAbstract: false, IsInterface: false } && t.IsAssignableTo(typeof(IEndpoint)))
+            .Select(t => Activator.CreateInstance(t) as IEndpoint)
+            .OfType<IEndpoint>();
+
+        foreach (IEndpoint endpoint in endpoints)
+        {
+            endpoint.MapEndpoint(app);
+        }
 
         return app;
     }
