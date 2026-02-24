@@ -15,6 +15,7 @@ try
         .ReadFrom.Services(services)
         .WriteTo.Console());
 
+    builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddHealthChecks();
 

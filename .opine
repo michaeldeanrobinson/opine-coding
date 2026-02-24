@@ -91,12 +91,13 @@
 - In `Program.cs`, create a bootstrap logger (`WriteTo.Console().CreateBootstrapLogger()`) before the try block so startup failures are captured.
 - Replace the bootstrap logger with the full pipeline logger via `builder.Host.UseSerilog(...)` using `ReadFrom.Configuration` and `ReadFrom.Services`.
 - Default sink: Console. OpenTelemetry will be added as an additional sink later.
+- Configure minimum log levels via a `Serilog` section in `appsettings.json` — do not use the `Logging` section; it is ignored when Serilog is the provider.
 
 ## Documentation
 - XML doc comments not required.
 
 ## No-Go Zone
-- No `try-catch` in application or request-handling code — handle exceptions via `IExceptionHandler` registered with `builder.Services.AddExceptionHandler<T>()` and activated with `app.UseExceptionHandler()`.
+- No `try-catch` in application or request-handling code — handle exceptions via `IExceptionHandler` registered with `builder.Services.AddProblemDetails()` + `builder.Services.AddExceptionHandler<T>()` and activated with `app.UseExceptionHandler()`. `AddProblemDetails()` is required; `UseExceptionHandler()` throws at startup without it.
 - Exception: the Serilog startup bootstrap `try/catch/finally` in `Program.cs` is required to capture startup failures and flush the logger.
 - No `#region` directives.
 - No `var`.
