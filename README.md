@@ -34,6 +34,13 @@ While "Vibe Coding" relies on an LLM’s probabilistic intuition to bridge gaps 
 
 ## Implementation Guide
 
+### 0. Auto-Bootstrap (Let the AI Write the First Draft)
+Don't start from a blank file. Give your AI agent this prompt and let it act as a project archaeologist — reading your existing enforcement artifacts and translating them into `.opine` opinions:
+
+> Analyse every enforcement artifact in this repository: `.editorconfig`, lint configuration files, formatter configs, build property files, and any existing style guides or rule sets. Based on what you find, generate a `.opine` file that codifies our naming conventions, formatting standards, architectural constraints, and any project-specific no-go patterns. For any section where the artifacts are silent, make no assumption — leave a `# TODO` placeholder instead. Output the result as a single Markdown file, one rule per bullet, grouped by section.
+
+Review the output, cut anything that doesn't reflect a real decision your team has made, and commit it. The AI does the archaeology; you do the editorial review.
+
 ### 1. The .opine File
 Create a `.opine` file in your repository root. Structure it in named sections so agents can target specific rules.
 
