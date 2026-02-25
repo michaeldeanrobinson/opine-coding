@@ -163,3 +163,28 @@ The sections and rules inside `.opine` are entirely yours — name them whatever
 - No `init()` functions — explicit initialization only.
 - No `interface{}` / `any` in public API — define a named interface.
 ```
+
+---
+
+## Community Contributions
+
+Opine Coding is stronger with more stacks represented. If you work in a language or ecosystem not yet covered under `examples/`, the methodology gives you a clear path to contribute.
+
+### The Process
+
+Run the [Auto-Bootstrap prompt](#0-auto-bootstrap-let-the-ai-write-the-first-draft) against your stack's canonical enforcement artifacts. Let the AI extract the first draft. Review it, cut anything not grounded in a real rule, and open a pull request adding it to `examples/{language}/.opine`.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full Sources of Truth and Proof of Work requirements.
+
+### Examples We'd Welcome
+
+| Ecosystem | Artifacts to Analyse |
+| :--- | :--- |
+| **Rust** | `clippy.toml`, `rustfmt.toml` |
+| **React** | ESLint React plugin, `tsconfig`, component conventions |
+| **Vue / Svelte** | ESLint, `vite.config`, component file conventions |
+| **Java / Kotlin** | `checkstyle.xml`, `detekt.yml`, `build.gradle` |
+| **Ruby** | `.rubocop.yml` |
+
+> [!TIP]
+> The best `.opine` submissions come from running the Auto-Bootstrap prompt against a well-maintained open-source project in that language, then filtering the output against the official style guide. The AI does the archaeology; you validate the findings.
