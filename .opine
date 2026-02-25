@@ -53,7 +53,7 @@
 
 ## Formatting
 - 4-space indent for `.cs`; 2-space for `.csproj`. Spaces, not tabs.
-- CRLF line endings; UTF-8; always insert final newline.
+- CRLF line endings for source files (`.cs`, `.csproj`, `.props`, `.json`); LF for documentation (`.md`). UTF-8; always insert final newline.
 - Open brace on new line for all blocks.
 - Always use braces — no braceless control flow.
 - Long parameter/argument lists: one parameter per line.

@@ -7,18 +7,22 @@
 *.cake   text diff=csharp eol=crlf
 
 # XML / config
-*.csproj text eol=crlf
-*.sln    text eol=crlf
-*.props  text eol=crlf
-*.targets text eol=crlf
-*.config text eol=crlf
-*.xml    text eol=crlf
-*.json   text eol=crlf
-*.yml    text eol=crlf
-*.yaml   text eol=crlf
-*.md     text eol=crlf
-*.txt    text eol=crlf
-*.sh     text eol=lf
+*.csproj       text eol=crlf
+*.sln          text eol=crlf
+*.props        text eol=crlf
+*.targets      text eol=crlf
+*.config       text eol=crlf
+*.xml          text eol=crlf
+*.json         text eol=crlf
+*.yml          text eol=crlf
+*.yaml         text eol=crlf
+*.md           text eol=lf
+*.txt          text eol=crlf
+*.sh           text eol=lf
+.opine         text eol=lf
+.editorconfig  text eol=lf
+.gitattributes text eol=lf
+.gitignore     text eol=lf
 
 # Binaries
 *.png    binary

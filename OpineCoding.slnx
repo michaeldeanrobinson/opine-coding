@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/OpineCoding.Api.Tests/OpineCoding.Api.Tests.csproj" />
     <Project Path="src/OpineCoding.Api/OpineCoding.Api.csproj" />
   </Folder>
   <Folder Name="/_Solution Items/">

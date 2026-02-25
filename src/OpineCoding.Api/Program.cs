@@ -18,13 +18,15 @@ try
     builder.Services.AddProblemDetails();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddHealthChecks();
+    builder.Services.AddOpenApi();
 
     WebApplication app = builder.Build();
 
     app.UseExceptionHandler();
 
     app.MapDefaultHealthChecks()
-       .MapDefaultEndpoints();
+       .MapDefaultEndpoints()
+       .MapDefaultOpenApi();
 
     app.Run();
 }

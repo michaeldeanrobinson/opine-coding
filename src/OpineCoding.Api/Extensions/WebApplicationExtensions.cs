@@ -13,6 +13,13 @@ internal static class WebApplicationExtensions
         return app;
     }
 
+    internal static WebApplication MapDefaultOpenApi(this WebApplication app)
+    {
+        app.MapOpenApi();
+
+        return app;
+    }
+
     internal static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         app.MapGet("/", () => Results.Ok())

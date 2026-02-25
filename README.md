@@ -7,6 +7,9 @@
 
 While "Vibe Coding" relies on an LLM’s probabilistic intuition to bridge gaps in requirements, **Opine Coding** uses an explicit, repository-level "Opinion File" to enforce architectural standards, syntax preferences, and project-specific guardrails.
 
+> [!NOTE]
+> **Opine Coding is language- and tool-agnostic.** This repo uses a C# / .NET project as its reference implementation. That is one example of the methodology, not the definition of it. The `.opine` concept works equally well for TypeScript, Python, Go, or any other stack. Wherever your team has a linter, a style guide, or a code review checklist, you have the raw material for an `.opine` file.
+
 ---
 
 ## Vibe vs. Opine
@@ -36,23 +39,26 @@ Create a `.opine` file in your repository root. Structure it in named sections s
 
 **Example:**
 ```markdown
-## C# Patterns
-- Use Primary Constructors. Favor `records` for DTOs.
-- Use collection expressions (`[]`) for all empty and initialized collections.
-- `readonly` on all eligible fields.
-
 ## Naming
-- Private instance fields: `_camelCase`. No `m_` prefix.
-- Types, methods, properties: `PascalCase`. Interfaces: prefix `I`.
+- Functions and methods: `camelCase`. Types and classes: `PascalCase`.
+- No abbreviations — `userAccountId`, not `usrAcctId`.
+- Private fields: `_prefixed`. Constants: `UPPER_SNAKE_CASE`.
 
-## Async
-- `ValueTask.FromResult` for synchronous interface implementations.
-- Forward `CancellationToken` where applicable.
+## Formatting
+- 2-space indent. Spaces, not tabs. LF line endings. Max line length: 120.
+- Always insert a trailing newline.
+
+## Error Handling
+- Never swallow errors silently — always log or rethrow with added context.
+- Prefer typed error results over exceptions for expected failure paths.
 
 ## No-Go Zone
-- No generic `try-catch` — use Global Exception Middleware.
-- No `#region` directives. No `var`.
+- No `console.log` in committed code — use the project logger.
+- No hardcoded secrets — use environment variables or a secrets manager.
+- No inline SQL — use the query builder or parameterized statements.
 ```
+
+> **This repo's `.opine`** (in the repository root) is the C# / .NET reference implementation — a complete, real-world example of this structure applied to a specific stack.
 
 ### 2. Bootstrap Your AI Agent
 Point your AI agent at `.opine` at the start of every session. Each tool has its own instruction file — the content is the same, only the location differs.
@@ -71,21 +77,82 @@ Regardless of tool, the directive is the same:
 ```markdown
 ## Session Bootstrap
 - Read `.opine` before generating any code. It is the source of truth.
-- Apply all sections: Architecture, Vertical Slices, C# Patterns, Naming, Formatting, Usings, Async, Security, API Defaults, Logging, Documentation, No-Go Zone.
+- Apply all sections defined in `.opine`.
 - Repo-specific patterns override AI defaults — no exceptions.
 ```
 
 ### 3. Source Your Opinions
 Don't write `.opine` rules from scratch — extract them from enforcement artifacts you already own:
 
-| Source | Extracts To |
-| :--- | :--- |
-| `.editorconfig` | Formatting, Naming, C# sugar preferences |
-| `stylecop.json` | Ordering rules, tuple naming |
-| `CodeAnalysis.ruleset` | Security, structural rules, diagnostic severities |
-| `Directory.Build.props` | Nullable, warnings-as-errors, target framework |
+| C# | JavaScript / TypeScript | Python | Go | Extracts To |
+| :--- | :--- | :--- | :--- | :--- |
+| `.editorconfig` | `.eslintrc` / `biome.json` | `pyproject.toml` | `.golangci.yml` | Formatting, naming, lint rules |
+| `stylecop.json` | `.prettierrc` | `ruff.toml` | `gofmt` defaults | Style enforcement |
+| `Directory.Build.props` | `tsconfig.json` | `setup.cfg` | `go.mod` | Project-level defaults |
+| `CodeAnalysis.ruleset` | `eslint-plugin-security` | `bandit` config | `gosec` config | Security rules |
 
 Feed each file to your AI agent and ask it to translate the rules into `.opine` opinions. Review, approve, and commit.
 
 ### 4. Keep It Current
-Treat `.opine` as a living document. When a language version supersedes a rule (e.g., `Array.Empty<T>()` → `[]`), update the opinion. Stale rules are just Vibe Coding by another name.
+Treat `.opine` as a living document. When a language version supersedes a rule, update the opinion. Stale rules are just Vibe Coding by another name.
+
+---
+
+## Adapting to Your Stack
+
+The sections and rules inside `.opine` are entirely yours — name them whatever fits your project. Below are three short examples showing what governed AI output looks like in other ecosystems.
+
+### TypeScript
+
+```markdown
+## TypeScript Patterns
+- Strict mode always on (`"strict": true` in `tsconfig`). No `any` — use `unknown` and narrow.
+- Prefer `type` aliases for object shapes; `interface` only for extensible contracts.
+- No default exports — named exports only.
+- `readonly` on arrays and object properties where mutation is not intended.
+
+## Naming
+- Variables and functions: `camelCase`. Types, enums: `PascalCase`. Constants: `UPPER_SNAKE_CASE`.
+- No `I` prefix on interfaces.
+
+## No-Go Zone
+- No `as` type assertions — use type guards or `satisfies`.
+- No `@ts-ignore` — fix the type, do not suppress it.
+- No barrel files (`index.ts` re-exports) — import directly from source.
+```
+
+### Python
+
+```markdown
+## Python Patterns
+- Type annotations on all function signatures — no bare `def foo(x)`.
+- `pathlib.Path` over `os.path` for all file system operations.
+- `dataclasses` or `pydantic` models for structured data — no plain dicts as public API.
+
+## Naming
+- Functions, variables, modules: `snake_case`. Classes: `PascalCase`. Constants: `UPPER_SNAKE_CASE`.
+- No single-letter names outside comprehensions and mathematical contexts.
+
+## No-Go Zone
+- No bare `except:` — always catch a specific exception type.
+- No `print()` in committed code — use `logging`.
+- No mutable default arguments — use `None` and guard inside the function body.
+```
+
+### Go
+
+```markdown
+## Go Patterns
+- `context.Context` is always the first parameter of any function crossing a service or I/O boundary.
+- Wrap errors with context: `fmt.Errorf("loading user: %w", err)`. Never discard errors.
+- Table-driven tests — `[]struct{ name, input, want }` with `t.Run`.
+
+## Naming
+- Exported identifiers: `PascalCase`. Unexported: `camelCase`. Acronyms fully uppercase (`HTTP`, `ID`).
+- Short receiver names — single letter is idiomatic (`u *User`). No `this` or `self`.
+
+## No-Go Zone
+- No `panic` in library code — return errors.
+- No `init()` functions — explicit initialization only.
+- No `interface{}` / `any` in public API — define a named interface.
+```
