@@ -83,7 +83,7 @@
 - Do not register `UseStaticFiles()` middleware in API projects — it enables indiscriminate static file serving.
 - Serve static assets (e.g. `favicon.ico`) via dedicated `MapGet` endpoints: resolve the path via `IWebHostEnvironment.WebRootPath`; guard with `String.IsNullOrEmpty(env.WebRootPath)` before calling `Path.Combine`; return `Results.NoContent()` if the path is empty or the file does not exist, otherwise `Results.File` with an explicit MIME type (`image/x-icon` for `.ico`); chain `.AllowAnonymous().ExcludeFromDescription().CacheOutput(policy => policy.Expire(TimeSpan.FromDays(7)))`.
 - Static assets (favicon, social preview, etc.) are placed in `wwwroot/` under the API project; served only via explicit `MapGet` endpoints, never via `UseStaticFiles()`.
-- Register middleware in this order before `app.Run()`: `UseExceptionHandler()` first, then `MapDefaultHealthChecks()`, then `MapDefaultEndpoints()`.
+- Register middleware in this order before `app.Run()`: `UseExceptionHandler()` first, then `MapDefaultHealthChecks()`, then `MapDefaultEndpoints()`, then `MapDefaultOpenApi()`.
 - Feature endpoints must chain `.WithName("{FeatureName}").Produces<{FeatureName}Response>()` for OpenAPI discoverability.
 
 ## Logging
