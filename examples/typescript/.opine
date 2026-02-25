@@ -1,0 +1,42 @@
+# TypeScript Opinions
+
+## Architecture
+- Feature-folder organisation; one module per feature, not one barrel of utils.
+- `src/` for source; `tests/` mirrors the `src/` structure.
+- One module per file; the file name matches the primary export name in `kebab-case`.
+- Prefer named exports — no default exports.
+
+## Naming
+- Types, interfaces, enums, classes: `PascalCase`.
+- Variables, functions, parameters: `camelCase`.
+- Module-level primitive constants: `SCREAMING_SNAKE_CASE`.
+- File names: `kebab-case.ts`.
+- No `I` prefix on interfaces — use descriptive names.
+
+## Formatting
+- 2-space indent. Spaces, not tabs.
+- Single quotes for strings; template literals only when interpolating.
+- Trailing commas in multi-line arrays, objects, and parameter lists (`"trailingComma": "all"` in Prettier).
+- Semicolons required.
+- Max line length: 100 characters.
+
+## TypeScript Patterns
+- `strict: true` in `tsconfig.json` — no exceptions.
+- Prefer `unknown` over `any`; never use `any` without an inline comment explaining why it is safe.
+- Use `import type` for type-only imports.
+- Use `satisfies` to validate object shape without widening the inferred type.
+- Prefer `readonly` arrays and properties for data that must not mutate.
+- Use discriminated unions over class hierarchies for modelling state.
+
+## Async
+- Prefer `async`/`await` over `.then()` chains.
+- Always `await` promises — never fire-and-forget without explicit handling.
+- Propagate errors with `throw`; catch only at boundaries (top-level handlers, API routes).
+
+## No-Go Zone
+- No `any` — use `unknown` and narrow with type guards.
+- No default exports — named exports only.
+- No `!` non-null assertion — use optional chaining or type guards.
+- No `// @ts-ignore` — fix the type error.
+- No `require()` — use ES module `import`.
+- No mutable module-level state.

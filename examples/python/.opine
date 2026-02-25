@@ -1,0 +1,38 @@
+# Python Opinions
+
+## Architecture
+- `src/{package}/` layout; tests mirror the package structure under `tests/`.
+- One module per file; package per feature — no flat directories of utilities.
+- Dependency injection via constructor parameters — no module-level singletons.
+
+## Naming
+- Modules, packages, variables, functions: `snake_case`.
+- Classes: `PascalCase`.
+- Constants: `SCREAMING_SNAKE_CASE`.
+- Private members: single underscore prefix `_`.
+- Type variables: descriptive `PascalCase` name (`T`, `ItemT`).
+
+## Formatting
+- `black` formatter; line length 88.
+- Double quotes for strings (black default).
+- `isort` for import ordering: standard library → third-party → local, each group separated by a blank line.
+
+## Python Patterns
+- Type annotations on every function signature and class attribute — no untyped code (`mypy --strict`).
+- Use `pathlib.Path` for all filesystem operations — never `os.path`.
+- Use `dataclasses` or `pydantic` models for structured data — no raw `dict` for domain types.
+- Prefer `Enum` for fixed sets of values over string literals.
+- Use `with` statements for all resource management; prefer `contextlib.suppress` over bare `try/except/pass`.
+
+## Async
+- Use `async def` / `await` consistently — do not mix sync and async in the same call stack.
+- Use `asyncio.gather` for concurrent tasks.
+- Never call `asyncio.run` inside an already-running event loop.
+
+## No-Go Zone
+- No bare `except` — always specify the exception type.
+- No `os.path` — use `pathlib`.
+- No mutable default arguments — use `None` and initialise inside the function body.
+- No `print()` in library code — use `logging`.
+- No `type: ignore` without an inline explanation comment.
+- No wildcard imports (`from module import *`).

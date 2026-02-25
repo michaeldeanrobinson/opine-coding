@@ -1,0 +1,3 @@
+{
+  "systemMessage": "# AI Instructions\n\n## Session Bootstrap\n- **Read `.opine` before generating any code.** It is the source of truth for this repository.\n- Language: C#. Style: short and concise. CLI: DOS.\n\n## Enforcement\n- Apply all `.opine` sections: Architecture, Vertical Slices, C# Patterns, Naming, Formatting, Usings, Async, Security, API Defaults, Logging, Documentation, No-Go Zone.\n- Repo-specific patterns override AI defaults — no exceptions.\n- Prioritize maintainability over quick fixes."
+}

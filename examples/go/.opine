@@ -1,0 +1,32 @@
+# Go Opinions
+
+## Architecture
+- One package per directory; package name matches the directory name — short and lowercase.
+- `cmd/` for entry points; `internal/` for application code; `pkg/` only for genuinely reusable libraries.
+- Feature packages live under `internal/` — not exported unless explicitly required by another module.
+
+## Naming
+- Packages: short, lowercase, no underscores.
+- Exported identifiers: `PascalCase`. Unexported: `camelCase`.
+- Interfaces: suffix `er` when describing behaviour (`Reader`, `Handler`); no `I` prefix.
+- Sentinel errors: package-level variables prefixed `Err` (`ErrNotFound`, `ErrTimeout`).
+- Acronyms: all caps — `ServeHTTP`, `ParseURL`, `GetID`.
+
+## Formatting
+- `gofmt` — all code must be `gofmt`-clean; no manual style decisions that contradict it.
+- `goimports` for import grouping: standard library → external → internal, each separated by a blank line.
+
+## Go Patterns
+- `context.Context` is always the first parameter of functions that perform I/O or call external services.
+- Wrap errors with `fmt.Errorf("operation failed: %w", err)` — never discard or silently swallow errors.
+- Prefer `errors.Is` / `errors.As` over type assertions for error inspection.
+- Use table-driven tests (`[]struct{ name, input, want string }`) in `*_test.go` files alongside the code under test.
+- Return `(T, error)` pairs — do not use panic for control flow in library or handler code.
+- Initialise structs with named fields — no positional struct literals for types with more than one field.
+
+## No-Go Zone
+- No `panic` in library or handler code — return errors.
+- No global mutable variables — pass state explicitly via parameters or receivers.
+- No bare `_` error discard — handle the error or add a comment explaining why it is safe to ignore.
+- No `init()` functions — use explicit initialisation in `main` or constructor functions.
+- No `interface{}` — use `any` (Go 1.18+) and constrain with generics where appropriate.
