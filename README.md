@@ -182,6 +182,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full Sources of Truth and Proof o
 | :--- | :--- |
 | **Rust** | `clippy.toml`, `rustfmt.toml` |
 | **React** | ESLint React plugin, `tsconfig`, component conventions |
+| **Angular** | `@angular-eslint`, `tsconfig`, Angular Style Guide |
 | **Vue / Svelte** | ESLint, `vite.config`, component file conventions |
 | **Java / Kotlin** | `checkstyle.xml`, `detekt.yml`, `build.gradle` |
 | **Ruby** | `.rubocop.yml` |
