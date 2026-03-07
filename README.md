@@ -1,191 +1,130 @@
-<img src="src/OpineCoding.Api/wwwroot/favicon.svg" width="48" height="48" align="left"/>
-
 # Opine Coding
 ### Stop Vibe Coding. Start Governing.
 
-**Opine Coding** is a methodology for professional developers who demand deterministic results from AI agents. 
+**Opine Coding** is a methodology for professional developers who demand deterministic results from AI agents. It is the architectural opposite of "Vibe Coding."
 
-While "Vibe Coding" relies on an LLM’s probabilistic intuition to bridge gaps in requirements, **Opine Coding** uses an explicit, repository-level "Opinion File" to enforce architectural standards, syntax preferences, and project-specific guardrails.
-
-> [!NOTE]
-> **Opine Coding is language- and tool-agnostic.** This repo uses a C# / .NET project as its reference implementation. That is one example of the methodology, not the definition of it. The `.opine` concept works equally well for TypeScript, Python, Go, or any other stack. Wherever your team has a linter, a style guide, or a code review checklist, you have the raw material for an `.opine` file.
+> [!IMPORTANT]
+> **This is a Manifesto, not a Product.**
+> The code provided in this repository is a **sample reference implementation** using C# and .NET. It exists to demonstrate the *idea* in practice. You are encouraged to take the core concept—governing AI through explicit repo-level opinions—and build your own implementation using whatever language, structure, or tooling fits your stack.
 
 ---
 
-## Vibe vs. Opine
+## 🧭 The Core Concept
+
+In **Vibe Coding**, you rely on the AI's probabilistic "best guess." This leads to "AI Code Slop"—technically functional code that violates your team's architecture, naming standards, and professional patterns.
+
+**Opine Coding** establishes the developer as the **Governor**. You provide the AI with a point of view (an Opinion) before it writes a single line of code. By using the AI as a **Project Archaeologist** to extract rules from your existing environment, you create a "Source of Truth" that enforces consistency across your entire team.
+
+### Vibe vs. Opine
 
 | Feature | Vibe Coding | Opine Coding |
 | :--- | :--- | :--- |
 | **Source of Truth** | AI's probabilistic "best guess" | User’s explicit `.opine` file |
-| **Consistency** | High variance; changes per prompt | Low variance; follows repo standards |
-| **Effort** | Low upfront; high "fix-it" time | High upfront; low "fix-it" time |
-| **Outcome** | Generic "Training Data" averages | Deterministic, tailor-made code |
-| **Role** | AI as a "Co-pilot" guessing intent | AI as an "Executor" following rules |
+| **Consistency** | High variance; "training data" averages | High consistency; follows repo standards |
+| **Effort** | Low upfront; high "fix-it" rework | High upfront; deterministic execution |
+| **Scale** | Fragmented; "Shaky" code across teams | Unified; a single professional voice |
+| **Technical Debt** | High (Boilerplate bloat, style drift) | Low (Architectural guardrails) |
 
 ---
 
-## The Core Tenets
+## 📜 The Core Tenets
+
 1. **Context is Not a Suggestion:** The instructions file is the source of truth, overriding the AI's default "best guesses."
 2. **Deterministic Output:** If you ask for a service, it should look exactly like your existing services, not a generic snippet.
-3. **Intentionality:** You specify the "How" so the AI can focus on the "What."
-4. **Governed Execution:** You move from managing prompts to managing a framework.
+3. **Intentionality:** You specify the *How* so the AI can focus on the *What*.
+4. **Governed Execution:** You move from managing individual prompts to managing a framework of intent.
 
 ---
 
-## Implementation Guide
+## 🛠️ Implementation Guide
 
-### 0. Auto-Bootstrap (Let the AI Write the First Draft)
-Don't start from a blank file. Give your AI agent this prompt and let it act as a project archaeologist — reading your existing enforcement artifacts and translating them into `.opine` opinions:
+### 0. The Project Archaeologist (Auto-Bootstrap)
+Don't write your rules from scratch. Use the AI to discover them. Run this prompt first in your own project:
 
-> Analyse every enforcement artifact in this repository: `.editorconfig`, lint configuration files, formatter configs, build property files, and any existing style guides or rule sets. Based on what you find, generate a `.opine` file that codifies our naming conventions, formatting standards, architectural constraints, and any project-specific no-go patterns. For any section where the artifacts are silent, make no assumption — leave a `# TODO` placeholder instead. Output the result as a single Markdown file, one rule per bullet, grouped by section.
-
-Review the output, cut anything that doesn't reflect a real decision your team has made, and commit it. The AI does the archaeology; you do the editorial review.
+> *"Analyze my `.editorconfig`, `lint` rules, and project dependencies. As a **Project Archaeologist**, generate a `.opine` file that codifies our naming conventions, architectural constraints, and formatting standards. Focus on making future output consistent with this specific environment."*
 
 ### 1. The .opine File
-Create a `.opine` file in your repository root. Structure it in named sections so agents can target specific rules.
+Place a `.opine` (or `.instructions.md`) file in your repository root. Structure it in named sections so agents can target specific rules. 
 
-**Example:**
+**Example Structure:**
 ```markdown
 ## Naming
-- Functions and methods: `camelCase`. Types and classes: `PascalCase`.
-- No abbreviations — `userAccountId`, not `usrAcctId`.
+- Functions/Methods: `camelCase`. Types/Classes: `PascalCase`.
 - Private fields: `_prefixed`. Constants: `UPPER_SNAKE_CASE`.
 
-## Formatting
-- 2-space indent. Spaces, not tabs. LF line endings. Max line length: 120.
-- Always insert a trailing newline.
-
 ## Error Handling
-- Never swallow errors silently — always log or rethrow with added context.
+- Never swallow errors silently.
 - Prefer typed error results over exceptions for expected failure paths.
 
 ## No-Go Zone
-- No `console.log` in committed code — use the project logger.
-- No hardcoded secrets — use environment variables or a secrets manager.
-- No inline SQL — use the query builder or parameterized statements.
+- No `console.log` or `print` in committed code.
+- No hardcoded secrets; use environment variables.
 ```
 
-> **This repo's `.opine`** (in the repository root) is the C# / .NET reference implementation — a complete, real-world example of this structure applied to a specific stack.
+### 2. Anchor Your Tools
+Point your agent at the `.opine` file. This prevents "Rule Drift" when switching between different IDEs or CLI agents.
 
-### 2. Bootstrap Your AI Agent
-Point your AI agent at `.opine` at the start of every session. Each tool has its own instruction file — the content is the same, only the location differs.
-
-| Tool | Instruction File |
-| :--- | :--- |
-| **GitHub Copilot** | `.github/copilot-instructions.md` |
-| **Cursor** | `.cursor/rules/*.mdc` |
-| **Windsurf** | `.windsurfrules` |
-| **Cline** | `.clinerules` |
-| **Aider** | `CONVENTIONS.md` |
-| **Continue** | `.continue/config.json` (system prompt field) |
-
-Regardless of tool, the directive is the same:
-
-```markdown
-## Session Bootstrap
-- Read `.opine` before generating any code. It is the source of truth.
-- Apply all sections defined in `.opine`.
-- Repo-specific patterns override AI defaults — no exceptions.
-```
-
-### 3. Source Your Opinions
-Don't write `.opine` rules from scratch — extract them from enforcement artifacts you already own:
-
-| C# | JavaScript / TypeScript | Python | Go | Extracts To |
-| :--- | :--- | :--- | :--- | :--- |
-| `.editorconfig` | `.eslintrc` / `biome.json` | `pyproject.toml` | `.golangci.yml` | Formatting, naming, lint rules |
-| `stylecop.json` | `.prettierrc` | `ruff.toml` | `gofmt` defaults | Style enforcement |
-| `Directory.Build.props` | `tsconfig.json` | `setup.cfg` | `go.mod` | Project-level defaults |
-| `CodeAnalysis.ruleset` | `eslint-plugin-security` | `bandit` config | `gosec` config | Security rules |
-
-Feed each file to your AI agent and ask it to translate the rules into `.opine` opinions. Review, approve, and commit.
-
-### 4. Keep It Current
-Treat `.opine` as a living document. When a language version supersedes a rule, update the opinion. Stale rules are just Vibe Coding by another name.
+| Agent | Target File | Integration Method |
+| :--- | :--- | :--- |
+| **Claude Code** | `CLAUDE.md` | Map your `.opine` content here. |
+| **Cursor** | `.cursor/rules/` | Use `.opine` as the global source for `.mdc` files. |
+| **Windsurf** | `.windsurfrules` | Use the "Global Context" feature. |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Paste or reference the `.opine` content. |
 
 ---
 
-## Adapting to Your Stack
+## 🌎 Ecosystem Examples
 
-The sections and rules inside `.opine` are entirely yours — name them whatever fits your project. Below are three short examples showing what governed AI output looks like in other ecosystems.
+The `.opine` concept works across any stack. Below is what "Governed AI" looks like in other ecosystems.
 
 ### TypeScript
-
 ```markdown
 ## TypeScript Patterns
-- Strict mode always on (`"strict": true` in `tsconfig`). No `any` — use `unknown` and narrow.
-- Prefer `type` aliases for object shapes; `interface` only for extensible contracts.
-- No default exports — named exports only.
-- `readonly` on arrays and object properties where mutation is not intended.
-
-## Naming
-- Variables and functions: `camelCase`. Types, enums: `PascalCase`. Constants: `UPPER_SNAKE_CASE`.
-- No `I` prefix on interfaces.
-
-## No-Go Zone
+- Strict mode always on. No `any` — use `unknown` and narrow.
+- Prefer `type` aliases for object shapes; named exports only.
 - No `as` type assertions — use type guards or `satisfies`.
-- No `@ts-ignore` — fix the type, do not suppress it.
-- No barrel files (`index.ts` re-exports) — import directly from source.
 ```
 
 ### Python
-
 ```markdown
 ## Python Patterns
-- Type annotations on all function signatures — no bare `def foo(x)`.
+- Type annotations on all function signatures.
 - `pathlib.Path` over `os.path` for all file system operations.
-- `dataclasses` or `pydantic` models for structured data — no plain dicts as public API.
-
-## Naming
-- Functions, variables, modules: `snake_case`. Classes: `PascalCase`. Constants: `UPPER_SNAKE_CASE`.
-- No single-letter names outside comprehensions and mathematical contexts.
-
-## No-Go Zone
 - No bare `except:` — always catch a specific exception type.
-- No `print()` in committed code — use `logging`.
-- No mutable default arguments — use `None` and guard inside the function body.
 ```
 
 ### Go
-
 ```markdown
 ## Go Patterns
-- `context.Context` is always the first parameter of any function crossing a service or I/O boundary.
-- Wrap errors with context: `fmt.Errorf("loading user: %w", err)`. Never discard errors.
-- Table-driven tests — `[]struct{ name, input, want }` with `t.Run`.
-
-## Naming
-- Exported identifiers: `PascalCase`. Unexported: `camelCase`. Acronyms fully uppercase (`HTTP`, `ID`).
-- Short receiver names — single letter is idiomatic (`u *User`). No `this` or `self`.
-
-## No-Go Zone
+- `context.Context` is always the first parameter in I/O boundaries.
+- Wrap errors with context: `fmt.Errorf("loading user: %w", err)`.
 - No `panic` in library code — return errors.
-- No `init()` functions — explicit initialization only.
-- No `interface{}` / `any` in public API — define a named interface.
 ```
 
 ---
 
-## Community Contributions
+## 🏛️ Enterprise & Team Scaling
 
-Opine Coding is stronger with more stacks represented. If you work in a language or ecosystem not yet covered under `examples/`, the methodology gives you a clear path to contribute.
+### Consistency Over Determinism
+While LLMs are probabilistic, Opine Coding narrows that probability to a professional window. It ensures that a PR written by an AI in one office looks identical to a PR written by a dev across the globe.
 
-### The Process
+### Scoped Opinions (No Context Pollution)
+For large monorepos, avoid one massive file. Use **Scoped Opinions**:
+* `root/.opine` -> Global architectural and security rules.
+* `src/api/.opine` -> Language-specific patterns.
+* `src/web/.opine` -> Frontend-specific patterns.
 
-Run the [Auto-Bootstrap prompt](#0-auto-bootstrap-let-the-ai-write-the-first-draft) against your stack's canonical enforcement artifacts. Let the AI extract the first draft. Review it, cut anything not grounded in a real rule, and open a pull request adding it to `examples/{language}/.opine`.
+AI agents are path-aware and will prioritize the opinions closest to the file they are editing.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full Sources of Truth and Proof of Work requirements.
+### Reducing AI Tech Debt
+Treat your `.opine` file as a pre-emptive Code Review. If you find yourself correcting the same AI mistake multiple times, that correction belongs in your Opinions. This prevents "AI Code Slop" from accumulating in your codebase.
 
-### Examples We'd Welcome
+---
 
-| Ecosystem | Artifacts to Analyse |
-| :--- | :--- |
-| **Rust** | `clippy.toml`, `rustfmt.toml` |
-| **React** | ESLint React plugin, `tsconfig`, component conventions |
-| **Angular** | `@angular-eslint`, `tsconfig`, Angular Style Guide |
-| **Vue / Svelte** | ESLint, `vite.config`, component file conventions |
-| **Java / Kotlin** | `checkstyle.xml`, `detekt.yml`, `build.gradle` |
-| **Ruby** | `.rubocop.yml` |
+## 🤝 Community Contributions
 
-> [!TIP]
-> The best `.opine` submissions come from running the Auto-Bootstrap prompt against a well-maintained open-source project in that language, then filtering the output against the official style guide. The AI does the archaeology; you validate the findings.
+Opine Coding is a language-agnostic movement. Since this repo is a reference implementation, we welcome templates for other stacks to help build the library of opinions.
+
+* **Reference Implementation:** C# / .NET (found in `/src`)
+* **Community Targets:** React, Rust, Go, Python (Pydantic). 
+* See [CONTRIBUTING.md](CONTRIBUTING.md) for pull request details.
